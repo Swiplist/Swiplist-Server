@@ -2,6 +2,7 @@ const Promise = require('bluebird');
 const mongoose = require('mongoose');
 const httpStatus = require('http-status');
 const APIError = require('../helpers/APIError');
+const uniqueValidator = require('mongoose-unique-validator');
 
 /**
  * User Schema
@@ -13,25 +14,32 @@ const UserSchema = new mongoose.Schema({
   },
   email: {
     type: String,
+    index: true,
+    unique: true,
     required: true
+
   },
-  password: {
+  passwordHash: {
     type: String,
     required: true
   },
   friends: [{type: String}],
   items: [{type: String}],
+  iconUrl: {
+    type: String
+  },
 
   mobileNumber: {
     type: String,
-    required: true,
-    match: [/^[1-9][0-9]{9}$/, 'The value of path {PATH} ({VALUE}) is not a valid mobile number.']
+    match: [/^[0-9]{8}$/, 'The value of path {PATH} ({VALUE}) is not a valid HK mobile number.']
   },
   createdAt: {
     type: Date,
     default: Date.now
   }
 });
+
+UserSchema.plugin(uniqueValidator);
 
 /**
  * Add your
@@ -80,6 +88,7 @@ UserSchema.statics = {
       .exec();
   }
 };
+
 
 /**
  * @typedef User

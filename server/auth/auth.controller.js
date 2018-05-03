@@ -1,7 +1,10 @@
 const jwt = require('jsonwebtoken');
 const httpStatus = require('http-status');
 const APIError = require('../helpers/APIError');
+const User = require('../user/user.model');
 const config = require('../../config/config');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 // sample user, used for authentication
 const user = {
@@ -17,20 +20,81 @@ const user = {
  * @returns {*}
  */
 function login(req, res, next) {
+
+  // With a JSON doc
+  User.findOne({
+    'username': req.body.username
+  }).exec(function (err, user) {
+    console.log(user);
+    if (!user) {
+      const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED, true);
+      return next(err);
+    }
+    bcrypt.compare(req.body.password, user.passwordHash).then(function (result) {
+      console.log(result);
+      if (result === true) {
+        const token = jwt.sign({
+          username: user.username
+        }, config.jwtSecret);
+        return res.json({
+          token,
+          username: user.username
+        });
+      } else {
+        const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED, true);
+        return next(err);
+      }
+    }).catch(function (err) {
+      return next(err);
+    });
+    if (err) return next(err);
+
+  });
+
   // Ideally you'll fetch this from the db
   // Idea here was to show how jwt works with simplicity
-  if (req.body.username === user.username && req.body.password === user.password) {
-    const token = jwt.sign({
-      username: user.username
-    }, config.jwtSecret);
-    return res.json({
-      token,
-      username: user.username
-    });
-  }
+  // if (req.body.username === user.username && req.body.password === user.password) {
+  //   const token = jwt.sign({
+  //     username: user.username
+  //   }, config.jwtSecret);
+  //   return res.json({
+  //     token,
+  //     username: user.username
+  //   });
+  // }
+  //
+  // const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED, true);
+  // return next(err);
+}
 
-  const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED, true);
-  return next(err);
+/**
+ * Register new user account
+ * Returns jwt token if valid username and password is provided
+ * @param req
+ * @param res
+ * @param next
+ * @returns {*}
+ */
+function register(req, res, next) {
+  bcrypt.hash(req.body.password, saltRounds).then(function (hash) {
+    // Store hash in your password DB.
+    const user = new User({
+      username: req.body.username,
+      email: req.body.email,
+      passwordHash: hash
+    });
+    user.save()
+      .then(savedUser => {
+        const token = jwt.sign({
+          username: savedUser.username
+        }, config.jwtSecret);
+        return res.json({
+          token,
+          username: savedUser.username
+        });
+      })
+      .catch(e => next(e));
+  }).catch(e => next(e));
 }
 
 /**
@@ -47,4 +111,4 @@ function getRandomNumber(req, res) {
   });
 }
 
-module.exports = { login, getRandomNumber };
+module.exports = {login, register, getRandomNumber};
