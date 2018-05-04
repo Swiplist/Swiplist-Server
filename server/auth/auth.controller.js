@@ -4,7 +4,6 @@ const APIError = require('../helpers/APIError');
 const User = require('../user/user.model');
 const config = require('../../config/config');
 const bcrypt = require('bcrypt');
-const logger = require('../../config/winston');
 
 const saltRounds = 10;
 
@@ -20,15 +19,15 @@ function login(req, res, next) {
   User.findOne({
     username: req.body.username
   })
-    .exec((err, user) => {
-      logger.log('info', user);
+    .exec()
+    .then((user) => {
+      // logger.log('info', user);
       if (!user) {
         const error = new APIError('Authentication error', httpStatus.UNAUTHORIZED, true);
         return next(error);
       }
-      bcrypt.compare(req.body.password, user.passwordHash)
+      return bcrypt.compare(req.body.password, user.passwordHash)
         .then((result) => {
-          logger.log('info', result);
           if (result === true) {
             const token = jwt.sign({
               username: user.username
@@ -42,23 +41,8 @@ function login(req, res, next) {
           return next(error);
         })
         .catch(error => next(error));
-      return next(err);
-    });
-
-  // Ideally you'll fetch this from the db
-  // Idea here was to show how jwt works with simplicity
-  // if (req.body.username === user.username && req.body.password === user.password) {
-  //   const token = jwt.sign({
-  //     username: user.username
-  //   }, config.jwtSecret);
-  //   return res.json({
-  //     token,
-  //     username: user.username
-  //   });
-  // }
-  //
-  // const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED, true);
-  // return next(err);
+    })
+    .catch(e => next(e));
 }
 
 /**
