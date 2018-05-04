@@ -61,14 +61,14 @@ function register(req, res, next) {
     .exec()
     .then((duplicatedUsernameUser) => {
       if (duplicatedUsernameUser) {
-        const err = new APIError('Username already exist', httpStatus.BAD_REQUEST);
+        const err = new APIError('Username already exist', httpStatus.CONFLICT);
         return next(err);
       }
       return User.findOne({ email: req.body.email })
         .exec()
         .then((duplicatedEmailUser) => {
           if (duplicatedEmailUser) {
-            const err = new APIError('Email already exist', httpStatus.BAD_REQUEST);
+            const err = new APIError('Email already exist', httpStatus.CONFLICT);
             return next(err);
           }
           return bcrypt.hash(req.body.password, saltRounds)
