@@ -4,6 +4,7 @@ const APIError = require('../helpers/APIError');
 const User = require('../user/user.model');
 const config = require('../../config/config');
 const bcrypt = require('bcrypt');
+const logger = require('../../config/winston');
 
 const saltRounds = 10;
 
@@ -54,23 +55,42 @@ function login(req, res, next) {
  * @returns {*}
  */
 function register(req, res, next) {
-  bcrypt.hash(req.body.password, saltRounds)
-    .then((hash) => {
-      // Store hash in your password DB.
-      const user = new User({
-        username: req.body.username,
-        email: req.body.email,
-        passwordHash: hash
-      });
-      user.save()
-        .then((savedUser) => {
-          const token = jwt.sign({
-            username: savedUser.username
-          }, config.jwtSecret);
-          return res.json({
-            token,
-            username: savedUser.username
-          });
+  User.findOne({
+    username: req.body.username
+  })
+    .exec()
+    .then((duplicatedUsernameUser) => {
+      if (duplicatedUsernameUser) {
+        const err = new APIError('Username already exist', httpStatus.BAD_REQUEST);
+        return next(err);
+      }
+      return User.findOne({ email: req.body.email })
+        .exec()
+        .then((duplicatedEmailUser) => {
+          if (duplicatedEmailUser) {
+            const err = new APIError('Email already exist', httpStatus.BAD_REQUEST);
+            return next(err);
+          }
+          return bcrypt.hash(req.body.password, saltRounds)
+            .then((hash) => {
+              const user = new User({
+                username: req.body.username,
+                email: req.body.email,
+                passwordHash: hash
+              });
+              return user.save()
+                .then((savedUser) => {
+                  const token = jwt.sign({
+                    username: savedUser.username
+                  }, config.jwtSecret);
+                  return res.json({
+                    token,
+                    username: savedUser.username
+                  });
+                })
+                .catch(e => next(e));
+            })
+            .catch(e => next(e));
         })
         .catch(e => next(e));
     })
