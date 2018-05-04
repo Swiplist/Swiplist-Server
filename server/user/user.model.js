@@ -23,8 +23,8 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  friends: [{type: String}],
-  items: [{type: String}],
+  friends: [{ type: String }],
+  items: [{ type: String }],
   iconUrl: {
     type: String
   },
@@ -80,9 +80,9 @@ UserSchema.statics = {
    * @param {number} limit - Limit number of users to be returned.
    * @returns {Promise<User[]>}
    */
-  list({skip = 0, limit = 50} = {}) {
+  list({ skip = 0, limit = 50 } = {}) {
     return this.find()
-      .sort({createdAt: -1})
+      .sort({ createdAt: -1 })
       .skip(+skip)
       .limit(+limit)
       .exec();

@@ -28,7 +28,9 @@ describe('## Auth APIs', () => {
         .send(invalidUserCredentials)
         .expect(httpStatus.UNAUTHORIZED)
         .then((res) => {
-          expect(res.body.message).to.equal('Authentication error');
+          expect(res.body.message)
+            .to
+            .equal('Authentication error');
           done();
         })
         .catch(done);
@@ -40,10 +42,15 @@ describe('## Auth APIs', () => {
         .send(validUserCredentials)
         .expect(httpStatus.OK)
         .then((res) => {
-          expect(res.body).to.have.property('token');
+          expect(res.body)
+            .to
+            .have
+            .property('token');
           jwt.verify(res.body.token, config.jwtSecret, (err, decoded) => {
             expect(err).to.not.be.ok; // eslint-disable-line no-unused-expressions
-            expect(decoded.username).to.equal(validUserCredentials.username);
+            expect(decoded.username)
+              .to
+              .equal(validUserCredentials.username);
             jwtToken = `Bearer ${res.body.token}`;
             done();
           });
@@ -58,7 +65,9 @@ describe('## Auth APIs', () => {
         .get('/api/auth/random-number')
         .expect(httpStatus.UNAUTHORIZED)
         .then((res) => {
-          expect(res.body.message).to.equal('Unauthorized');
+          expect(res.body.message)
+            .to
+            .equal('Unauthorized');
           done();
         })
         .catch(done);
@@ -70,7 +79,9 @@ describe('## Auth APIs', () => {
         .set('Authorization', 'Bearer inValidToken')
         .expect(httpStatus.UNAUTHORIZED)
         .then((res) => {
-          expect(res.body.message).to.equal('Unauthorized');
+          expect(res.body.message)
+            .to
+            .equal('Unauthorized');
           done();
         })
         .catch(done);
@@ -82,7 +93,10 @@ describe('## Auth APIs', () => {
         .set('Authorization', jwtToken)
         .expect(httpStatus.OK)
         .then((res) => {
-          expect(res.body.num).to.be.a('number');
+          expect(res.body.num)
+            .to
+            .be
+            .a('number');
           done();
         })
         .catch(done);

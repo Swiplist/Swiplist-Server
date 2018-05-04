@@ -19,7 +19,7 @@ const ItemSchema = new mongoose.Schema({
     type: String,
     required: false
   },
-  dataUrl: { //type specific url, can be video, youtube, or music url
+  dataUrl: { // type specific url, can be video, youtube, or music url
     type: String,
     required: false
   },
@@ -72,9 +72,9 @@ ItemSchema.statics = {
    * @param {number} limit - Limit number of items to be returned.
    * @returns {Promise<Item[]>}
    */
-  list({skip = 0, limit = 50} = {}) {
+  list({ skip = 0, limit = 50 } = {}) {
     return this.find()
-      .sort({createdAt: -1})
+      .sort({ createdAt: -1 })
       .skip(+skip)
       .limit(+limit)
       .exec();
