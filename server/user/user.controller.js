@@ -21,6 +21,17 @@ function get(req, res) {
 }
 
 /**
+ * Get  user by token
+ * @returns {User}
+ */
+function me(req, res, next) {
+  return User.get(req.user.id)
+    .then(user => res.json(user))
+    .catch(e => next(e));
+}
+
+
+/**
  * Create new user
  * @property {string} req.body.username - The username of user.
  * @property {string} req.body.mobileNumber - The mobileNumber of user.
@@ -77,4 +88,4 @@ function remove(req, res, next) {
     .catch(e => next(e));
 }
 
-module.exports = { load, get, create, update, list, remove };
+module.exports = { load, get, create, update, list, remove, me };

@@ -4,7 +4,7 @@ const APIError = require('../helpers/APIError');
 const User = require('../user/user.model');
 const config = require('../../config/config');
 const bcrypt = require('bcrypt');
-const logger = require('../../config/winston');
+// const logger = require('../../config/winston');
 
 const saltRounds = 10;
 
@@ -31,11 +31,13 @@ function login(req, res, next) {
         .then((result) => {
           if (result === true) {
             const token = jwt.sign({
-              username: user.username
+              username: user.username,
+              id: user._id
             }, config.jwtSecret);
             return res.json({
               token,
-              username: user.username
+              username: user.username,
+              id: user._id
             });
           }
           const error = new APIError('Authentication error', httpStatus.UNAUTHORIZED, true);
@@ -81,11 +83,13 @@ function register(req, res, next) {
               return user.save()
                 .then((savedUser) => {
                   const token = jwt.sign({
-                    username: savedUser.username
+                    username: savedUser.username,
+                    id: savedUser._id
                   }, config.jwtSecret);
                   return res.json({
                     token,
-                    username: savedUser.username
+                    username: savedUser.username,
+                    id: savedUser._id
                   });
                 })
                 .catch(e => next(e));
