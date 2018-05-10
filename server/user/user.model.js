@@ -25,6 +25,9 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  description: {
+    type: String
+  },
   friends: [{ type: String }],
   items: [{ type: String }],
   iconUrl: {
