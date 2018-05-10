@@ -20,6 +20,7 @@ function login(req, res, next) {
   User.findOne({
     username: req.body.username
   })
+    .select('+passwordHash')
     .exec()
     .then((user) => {
       // logger.log('info', user);
