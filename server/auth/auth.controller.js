@@ -58,44 +58,24 @@ function login(req, res, next) {
  * @returns {*}
  */
 function register(req, res, next) {
-  User.findOne({
-    username: req.body.username
-  })
-    .exec()
-    .then((duplicatedUsernameUser) => {
-      if (duplicatedUsernameUser) {
-        const err = new APIError('Username already exist', httpStatus.CONFLICT);
-        return next(err);
-      }
-      return User.findOne({ email: req.body.email })
-        .exec()
-        .then((duplicatedEmailUser) => {
-          if (duplicatedEmailUser) {
-            const err = new APIError('Email already exist', httpStatus.CONFLICT);
-            return next(err);
-          }
-          return bcrypt.hash(req.body.password, saltRounds)
-            .then((hash) => {
-              const user = new User({
-                username: req.body.username,
-                email: req.body.email,
-                passwordHash: hash
-              });
-              return user.save()
-                .then((savedUser) => {
-                  const token = jwt.sign({
-                    username: savedUser.username,
-                    id: savedUser._id
-                  }, config.jwtSecret);
-                  return res.json({
-                    token,
-                    username: savedUser.username,
-                    id: savedUser._id
-                  });
-                })
-                .catch(e => next(e));
-            })
-            .catch(e => next(e));
+  bcrypt.hash(req.body.password, saltRounds)
+    .then((hash) => {
+      const user = new User({
+        username: req.body.username,
+        email: req.body.email,
+        passwordHash: hash
+      });
+      return user.save()
+        .then((savedUser) => {
+          const token = jwt.sign({
+            username: savedUser.username,
+            id: savedUser._id
+          }, config.jwtSecret);
+          return res.json({
+            token,
+            username: savedUser.username,
+            id: savedUser._id
+          });
         })
         .catch(e => next(e));
     })
