@@ -27,7 +27,10 @@ const envVarsSchema = Joi.object({
     .required()
     .description('Mongo DB host url'),
   MONGO_PORT: Joi.number()
-    .default(27017)
+    .default(27017),
+  STEAM_WEB_API_KEY: Joi.string()
+    .required()
+    .description('Steam Web Api Key')
 })
   .unknown()
   .required();
@@ -45,7 +48,9 @@ const config = {
   mongo: {
     host: envVars.MONGO_HOST,
     port: envVars.MONGO_PORT
-  }
+  },
+  steamWebApiKey: envVars.STEAM_WEB_API_KEY
+
 };
 
 module.exports = config;

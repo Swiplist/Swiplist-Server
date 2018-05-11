@@ -1,0 +1,15 @@
+# For a quick start check out our HTTP Requests collection (Tools|HTTP Client|Open HTTP Requests Collection).
+#
+# Following HTTP Request Live Templates are available:
+# * 'gtrp' and 'gtr' create a GET request with or without query parameters;
+# * 'ptr' and 'ptrp' create a POST request with a simple or parameter-like body;
+# * 'mptr' and 'fptr' create a POST request to submit a form with a text or file field (multipart/form-data);
+POST http://localhost:4040/api/import/steam/games
+Content-Type: application/json
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QiLCJpZCI6IjVhZWIzNzQ1ZmM3ODYxNWY2Y2UwNzA2YiIsImlhdCI6MTUyNTk3NDA2NX0.a9mV2bcj49jMTVcZH8yPbtyOkgPQYcfFQo_wErDia3o
+
+{
+  "steamId": "76561198080125456"
+}
+
+###

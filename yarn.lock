@@ -4055,6 +4055,12 @@ statuses@~1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/statuses/-/statuses-1.4.0.tgz#bb73d446da2796106efcc1b601a253d6c46bd087"
 
+steam-web@false0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/steam-web/-/steam-web-0.7.0.tgz#b0424fb522ecf831184e7874320f1b3819e9442d"
+  dependencies:
+    qs "^6.1.0"
+
 stream-combiner@~0.0.4:
   version "0.0.4"
   resolved "https://registry.yarnpkg.com/stream-combiner/-/stream-combiner-0.0.4.tgz#4d5e433c185261dde623ca3f44c586bcf5c4ad14"

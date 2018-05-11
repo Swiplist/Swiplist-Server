@@ -61,6 +61,7 @@
     "mongoose-unique-validator": "false2.0.1",
     "morgan": "1.9.0",
     "nodemon": "false1.17.3",
+    "steam-web": "false0.7.0",
     "winston": "2.4.1"
   },
   "devDependencies": {
