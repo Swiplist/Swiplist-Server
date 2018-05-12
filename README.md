@@ -50,7 +50,7 @@ cd express-mongoose-es6-rest-api
 ```
 
 Install yarn:
-```js
+```sh
 npm install -g yarn
 ```
 

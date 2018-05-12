@@ -32,7 +32,7 @@ const ItemSchema = new mongoose.Schema({
     default: Date.now
   },
   metadata: {
-    //game
+    // game
     appid: Number,
     playtime_forever: Number,
     // playtime_2weeks: Number,
