@@ -1,5 +1,6 @@
 {
   "rules": {
+    "no-param-reassign": 0,
     "linebreak-style": 0,
     "indent": [
       2,
