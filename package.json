@@ -40,6 +40,7 @@
     "boilerplate"
   ],
   "dependencies": {
+    "axios": "false0.18.0",
     "bcrypt": "false2.0.1",
     "bluebird": "3.5.1",
     "body-parser": "1.18.2",
@@ -56,13 +57,15 @@
     "http-status": "1.0.1",
     "joi": "10.6.0",
     "jsonwebtoken": "7.1.9",
+    "mal-scraper": "false2.4.2",
     "method-override": "^2.3.10",
     "mongoose": "5.1.0",
     "mongoose-unique-validator": "2.0.1",
     "morgan": "1.9.0",
     "nodemon": "false1.17.3",
     "steam-web": "false0.7.0",
-    "winston": "2.4.1"
+    "winston": "2.4.1",
+    "xml2js": "false0.4.19"
   },
   "devDependencies": {
     "chai": "4.1.2",

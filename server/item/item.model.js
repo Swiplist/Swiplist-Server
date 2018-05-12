@@ -31,13 +31,17 @@ const ItemSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
+  src: String,
+  createdBy: {
+    type: String,
+    ref: 'User'
+  },
   metadata: {
-    // game
-    appid: Number,
-    playtime_forever: Number,
-    // playtime_2weeks: Number,
-    img_icon_url: String
-
+    // // game
+    // appid: Number,
+    // playtime_forever: Number,
+    // // playtime_2weeks: Number,
+    // img_icon_url: String
   }
 });
 

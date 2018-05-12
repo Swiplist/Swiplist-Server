@@ -32,6 +32,7 @@ const UserSchema = new mongoose.Schema({
   friends: [{ type: String }],
   items: [{ type: String }],
   games: [{ type: String, ref: 'Item' }],
+  importedGames: [{}],
   iconUrl: {
     type: String
   },
