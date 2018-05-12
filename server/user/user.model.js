@@ -33,6 +33,8 @@ const UserSchema = new mongoose.Schema({
   items: [{ type: String }],
   games: [{ type: String, ref: 'Item' }],
   importedGames: [{}],
+  anime: [{ type: String, ref: 'Item' }],
+  importedAnime: [{}],
   iconUrl: {
     type: String
   },
@@ -73,6 +75,7 @@ UserSchema.statics = {
   get(id) {
     return this.findById(id)
       .populate('games')
+      .populate('anime')
       .exec()
       .then((user) => {
         if (user) {
