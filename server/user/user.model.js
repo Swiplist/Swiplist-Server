@@ -31,6 +31,7 @@ const UserSchema = new mongoose.Schema({
   },
   friends: [{ type: String }],
   items: [{ type: String }],
+  games: [String],
   iconUrl: {
     type: String
   },

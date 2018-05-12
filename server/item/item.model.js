@@ -30,6 +30,14 @@ const ItemSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
+  },
+  metadata: {
+    //game
+    appid: Number,
+    playtime_forever: Number,
+    // playtime_2weeks: Number,
+    img_icon_url: String
+
   }
 });
 
