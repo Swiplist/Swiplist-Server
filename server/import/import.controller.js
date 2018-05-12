@@ -57,7 +57,7 @@ function steamGames(req, res, next) {
       let games = data.response.games;
       let gameIds = games.map(game => game.appid);
       let gameItems = [];
-      Item.find({
+      return Item.find({
         'metadata.appid': {
           $in: gameIds
         }
@@ -81,27 +81,22 @@ function steamGames(req, res, next) {
             });
             itemsToBeSaved.push(item);
           }
-          Item.create(itemsToBeSaved)
+          return Item.create(itemsToBeSaved)
             .then(
               savedItems => {
                 if (savedItems) gameItems.push(...savedItems);
-                User.get(req.user.id)
+                return User.get(req.user.id)
                   .then(user => {
-                    Item.find({
-                      _id: {
-                        $in: user.games
-                      }
-                    })
-                      .exec()
-                      .then(likedGames => {
-                        likedGames.push(...gameItems);
-
-                        likedGames.sort((a, b) => b.metadata.playtime_forever - a.metadata.playtime_forever);
-                        user.games = [...new Set(likedGames.map(game => String(game._id)))];
-
-                        user.save()
-                          .then(savedUser => {
-                            return res.json(savedUser);
+                    let likedGames = user.games;
+                    likedGames.push(...gameItems);
+                    likedGames.sort((a, b) => b.metadata.playtime_forever - a.metadata.playtime_forever);
+                    user.games = [...new Set(likedGames.map(game => String(game._id)))];
+                    return user.save()
+                      .then(savedUser => {
+                        return savedUser.populate('games')
+                          .execPopulate()
+                          .then(populatedUser => {
+                            return res.json(populatedUser);
                           })
                           .catch(err => next(err));
                       })

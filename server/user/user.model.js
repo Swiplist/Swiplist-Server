@@ -31,7 +31,7 @@ const UserSchema = new mongoose.Schema({
   },
   friends: [{ type: String }],
   items: [{ type: String }],
-  games: [String],
+  games: [{ type: String, ref: 'Item' }],
   iconUrl: {
     type: String
   },
@@ -71,6 +71,7 @@ UserSchema.statics = {
    */
   get(id) {
     return this.findById(id)
+      .populate('games')
       .exec()
       .then((user) => {
         if (user) {
