@@ -18,6 +18,10 @@ router.route('/search')
   .post(itemCtrl.search);
 /** POST /api/items/search - Full text search on query*/
 
+router.route('/ranking')
+  .post(itemCtrl.ranking);
+/** POST /api/items/ranking - Ranking*/
+
 router.route('/:itemId')
 /** GET /api/items/:itemId - Get item */
   .get(itemCtrl.get)

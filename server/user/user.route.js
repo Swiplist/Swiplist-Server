@@ -19,13 +19,17 @@ router.route('/search')
 
 router.route('/me')
 /** GET /api/users/me - Get current user reperesented by the token */
-  .get(expressJwt({ secret: config.jwtSecret }), userCtrl.me);
+  .get(expressJwt({ secret: config.jwtSecret }), userCtrl.me)
+
+  /** PUT /api/users/me - Update user */
+  .put(expressJwt({ secret: config.jwtSecret }), userCtrl.updateMe);
+
 router.route('/:userId')
 /** GET /api/users/:userId - Get user */
   .get(userCtrl.get)
 
   /** PUT /api/users/:userId - Update user */
-  .put(validate(paramValidation.updateUser), userCtrl.update)
+  .put(userCtrl.update)
 
   /** DELETE /api/users/:userId - Delete user */
   .delete(userCtrl.remove);

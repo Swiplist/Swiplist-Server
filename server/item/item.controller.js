@@ -1,4 +1,5 @@
 const Item = require('./item.model');
+const User = require('../user/user.model');
 
 /**
  * Load user and append to req.
@@ -13,8 +14,8 @@ function load(req, res, next, id) {
 }
 
 /**
- * Search  user by query
- * @returns [User]
+ * Search  item by query
+ * @returns [Item]
  */
 function search(req, res, next) {
   return Item.find({
@@ -23,6 +24,77 @@ function search(req, res, next) {
   }, {})
     .exec()
     .then(docs => res.json(docs))
+    .catch(e => next(e));
+}
+
+/**
+ * Search  user by query
+ * @returns [Item]
+ */
+function ranking(req, res, next) {
+  return User.find({})
+  // .populate('anime')
+  // .populate('manga')
+  // .populate('games')
+    .exec()
+    .then((users) => {
+      const animeMap = new Map();
+      const mangaMap = new Map();
+      const gamesMap = new Map();
+      for (const user of users) {
+        for (const [index, anime] of user.anime.entries()) {
+          if (animeMap.has(anime)) {
+            animeMap.set(anime, animeMap.get(anime) + (1.0 / (index + 1)));
+          } else {
+            animeMap.set(anime, 1.0 / (index + 1));
+          }
+        }
+        for (const [index, manga] of user.manga.entries()) {
+          if (mangaMap.has(manga)) {
+            mangaMap.set(manga, mangaMap.get(manga) + (1.0 / (index + 1)));
+          } else {
+            mangaMap.set(manga, 1.0 / (index + 1));
+          }
+        }
+        for (const [index, game] of user.games.entries()) {
+          if (gamesMap.has(game)) {
+            gamesMap.set(game, gamesMap.get(game) + (1.0 / (index + 1)));
+          } else {
+            gamesMap.set(game, 1.0 / (index + 1));
+          }
+        }
+      }
+      return Item.find({ category: { $in: req.body.categories } })
+        .exec()
+        .then((items) => {
+          const rankedItems = items.map(
+            (item1) => {
+              if (animeMap.has(String(item1._id))) {
+                item1.rankedScore =
+                  animeMap.get(String(item1._id));
+              } else if (mangaMap.has(String(item1._id))) {
+                item1.rankedScore =
+                  mangaMap.get(String(item1._id));
+              } else if (gamesMap.has(String(item1._id))) {
+                item1.rankedScore =
+                  gamesMap.get(String(item1._id));
+              }
+              return item1;
+            }
+          );
+          return Promise.all(rankedItems.map(item => item.save()))
+            .then(() => Item.find({ category: { $in: req.body.categories } })
+              .sort({
+                rankedScore: -1
+              })
+              .exec()
+              .then(sortedItems => res.json(sortedItems))
+              .catch(e => next(e))
+            )
+            .catch(e => next(e));
+        })
+        .catch(e => next(e));
+    })
     .catch(e => next(e));
 }
 
@@ -91,4 +163,4 @@ function remove(req, res, next) {
     .catch(e => next(e));
 }
 
-module.exports = { load, get, create, update, list, remove, search };
+module.exports = { load, get, create, update, list, remove, search, ranking };

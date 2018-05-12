@@ -81,11 +81,39 @@ function create(req, res, next) {
  */
 function update(req, res, next) {
   const user = req.user;
-  user.username = req.body.username;
-  user.mobileNumber = req.body.mobileNumber;
+  // user.mobileNumber = req.body.mobileNumber;
+  user.anime = req.body.anime;
+  user.manga = req.body.manga;
+  user.games = req.body.games;
 
   user.save()
     .then(savedUser => res.json(savedUser))
+    .catch(e => next(e));
+}
+
+/**
+ * Update this  user
+ * @property {string} req.body.username - The username of user.
+ * @property {string} req.body.mobileNumber - The mobileNumber of user.
+ * @returns {User}
+ */
+function updateMe(req, res, next) {
+  // const user = req.user;
+  User.get(req.user.id)
+    .then((user) => {
+      if (req.body.anime) user.anime = req.body.anime;
+      if (req.body.manga) user.manga = req.body.manga;
+      if (req.body.games) user.games = req.body.games;
+      user.save()
+        .then(savedUser => savedUser
+          // .populate('anime')
+          // .populate('manga')
+          // .populate('games')
+          .execPopulate()
+          .then(populatedUser => res.json(populatedUser))
+          .catch(e => next(e)))
+        .catch(e => next(e));
+    })
     .catch(e => next(e));
 }
 
@@ -113,4 +141,4 @@ function remove(req, res, next) {
     .catch(e => next(e));
 }
 
-module.exports = { load, get, create, update, list, remove, me, search };
+module.exports = { load, get, create, update, updateMe, list, remove, me, search };

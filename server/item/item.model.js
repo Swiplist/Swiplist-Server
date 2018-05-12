@@ -36,6 +36,7 @@ const ItemSchema = new mongoose.Schema({
     type: String,
     ref: 'User'
   },
+  rankedScore: Number,
   metadata: {
     // // game
     // appid: Number,
