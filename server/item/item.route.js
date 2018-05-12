@@ -14,6 +14,10 @@ router.route('/')
   /** POST /api/items - Create new item */
   .post(itemCtrl.create);
 
+router.route('/search')
+  .post(itemCtrl.search);
+/** POST /api/items/search - Full text search on query*/
+
 router.route('/:itemId')
 /** GET /api/items/:itemId - Get item */
   .get(itemCtrl.get)

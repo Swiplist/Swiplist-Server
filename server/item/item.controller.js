@@ -13,6 +13,20 @@ function load(req, res, next, id) {
 }
 
 /**
+ * Search  user by query
+ * @returns [User]
+ */
+function search(req, res, next) {
+  return Item.find({
+    $text: { $search: req.body.query },
+    category: { $in: req.body.categories }
+  }, {})
+    .exec()
+    .then(docs => res.json(docs))
+    .catch(e => next(e));
+}
+
+/**
  * Get item
  * @returns {Item}
  */
@@ -77,4 +91,4 @@ function remove(req, res, next) {
     .catch(e => next(e));
 }
 
-module.exports = { load, get, create, update, list, remove };
+module.exports = { load, get, create, update, list, remove, search };

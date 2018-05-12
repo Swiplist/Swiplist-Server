@@ -44,7 +44,15 @@ const ItemSchema = new mongoose.Schema({
     // img_icon_url: String
   }
 });
+// include all string fields in the text index
+// ItemSchema.index({ '$**': 'text' });
 
+ItemSchema.index({
+  name: 'text',
+  description: 'text',
+  category: 'text',
+  'metadata.series_synonyms': 'text',
+}, { name: 'itemTextIndex' });
 /**
  * Add your
  * - pre-save hooks

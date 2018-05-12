@@ -13,6 +13,10 @@ router.route('/')
 
   /** POST /api/users - Create new user */
   .post(validate(paramValidation.createUser), userCtrl.create);
+router.route('/search')
+  .post(userCtrl.search);
+/** POST /api/users/search - Full text search on query*/
+
 router.route('/me')
 /** GET /api/users/me - Get current user reperesented by the token */
   .get(expressJwt({ secret: config.jwtSecret }), userCtrl.me);

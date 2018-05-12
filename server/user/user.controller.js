@@ -30,6 +30,31 @@ function me(req, res, next) {
     .catch(e => next(e));
 }
 
+/**
+ * Search  user by query
+ * @returns [User]
+ */
+function search(req, res, next) {
+  return User.find({
+    $or: [
+      { $text: { $search: req.body.query } },
+      // { 'importedGames.name': { $regex: req.body.query, $options: 'i' } },
+      // { 'importedAnime.name': { $regex: req.body.query, $options: 'i' } },
+      // { 'importedManga.name': { $regex: req.body.query, $options: 'i' } },
+    ]
+  }, {
+    importedGames: 0,
+    importedAnime: 0,
+    importedManga: 0,
+    games: 0,
+    anime: 0,
+    manga: 0
+  })
+    .exec()
+    .then(docs => res.json(docs))
+    .catch(e => next(e));
+}
+
 
 /**
  * Create new user
@@ -88,4 +113,4 @@ function remove(req, res, next) {
     .catch(e => next(e));
 }
 
-module.exports = { load, get, create, update, list, remove, me };
+module.exports = { load, get, create, update, list, remove, me, search };

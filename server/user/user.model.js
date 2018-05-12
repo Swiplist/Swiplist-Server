@@ -51,6 +51,18 @@ const UserSchema = new mongoose.Schema({
   }
 });
 
+// include all string fields in the text index
+UserSchema.index({
+  username: 'text',
+  email: 'text',
+  description: 'text',
+  mobileNumber: 'text',
+  'importedGames.name': 'text',
+  'importedAnime.name': 'text',
+  'importedManga.name': 'text',
+}, { name: 'userTextIndex' });
+
+
 UserSchema.plugin(uniqueValidator);
 
 /**

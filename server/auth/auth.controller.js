@@ -58,7 +58,7 @@ function login(req, res, next) {
  * @returns {*}
  */
 function register(req, res, next) {
-  bcrypt.hash(req.body.password, saltRounds)
+  return bcrypt.hash(req.body.password, saltRounds)
     .then((hash) => {
       const user = new User({
         username: req.body.username,
