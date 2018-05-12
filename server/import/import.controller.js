@@ -50,7 +50,7 @@ function malAnime(req, res, next) {
               .then((items) => {
                 animeItems.push(...items);
                 const newAnimes = animes.filter(anime => !items.find(
-                  item => String(anime.series_animedb_id, 10)
+                  item => String(anime.series_animedb_id)
                     === String(item.metadata.series_animedb_id))
                 );
                 const itemsToBeSaved = [];
@@ -58,7 +58,7 @@ function malAnime(req, res, next) {
                   const item = new Item({
                     name: newAnime.series_title,
                     imageUrl: newAnime.series_image,
-                    metadata: newAnime,
+                    metadata: JSON.parse(JSON.stringify(newAnime)),
                     category: 'anime',
                     src: 'mal',
                     createdBy: user._id
@@ -127,7 +127,101 @@ function malAnime(req, res, next) {
  * @returns {*}
  */
 function malManga(req, res, next) {
-  return next();
+  return User.get(req.user.id)
+    .then((user) => {
+      const username = req.body.username;
+      return axios.get('https://myanimelist.net/malappinfo.php', {
+        params: {
+          u: username,
+          status: 'all',
+          type: 'manga' // This can be changed to 'manga' too to retrieve manga lists.
+        }
+      })
+        .then(({ data }) => {
+          parseString(data, { explicitArray: false, emptyTag: null }, (err, list) => {
+            if (err) next(err);
+            const mal = list.myanimelist;
+            if (!mal) {
+              next(new APIError('User does not exist.', httpStatus.NOT_FOUND));
+            }
+            // return res.json(mal);
+            const mangaList = mal.manga;
+            const mangaIds = mangaList.map(manga => manga.series_mangadb_id);
+            const mangaItems = [];
+            return Item.find({
+              'metadata.series_mangadb_id': {
+                $in: mangaIds
+              }
+            })
+              .exec()
+              .then((items) => {
+                mangaItems.push(...items);
+                const newMangaList = mangaList.filter(manga => !items.find(
+                  item => String(manga.series_mangadb_id)
+                    === String(item.metadata.series_mangadb_id))
+                );
+                const itemsToBeSaved = [];
+                for (const newManga of newMangaList) {
+                  const item = new Item({
+                    name: newManga.series_title,
+                    imageUrl: newManga.series_image,
+                    metadata: JSON.parse(JSON.stringify(newManga)),
+                    category: 'manga',
+                    src: 'mal',
+                    createdBy: user._id
+                  });
+                  delete item.metadata.my_id;
+                  delete item.metadata.my_read_chapters;
+                  delete item.metadata.my_read_volumes;
+                  delete item.metadata.my_start_date;
+                  delete item.metadata.my_finish_date;
+                  delete item.metadata.my_score;
+                  delete item.metadata.my_status;
+                  delete item.metadata.my_rereadingg;
+                  delete item.metadata.my_rereading_chap;
+                  delete item.metadata.my_last_updated;
+                  delete item.metadata.my_tags;
+                  item.markModified('metadata');
+                  itemsToBeSaved.push(item);
+                }
+                return Item.create(itemsToBeSaved)
+                  .then(
+                    (savedItems) => {
+                      if (savedItems) mangaItems.push(...savedItems);
+                      const likedManga = user.manga;
+                      const mangaItemsWithScore = mangaItems.map(
+                        (item1) => {
+                          item1.metadata =
+                            mangaList.find(
+                              item2 =>
+                                item2 && String(item1.metadata.series_mangadb_id)
+                                === String(item2.series_mangadb_id)
+                            );
+                          return item1;
+                        }
+                      );
+                      mangaItemsWithScore.sort(
+                        (a, b) => b.metadata.my_score - a.metadata.my_score
+                      );
+                      likedManga.push(...mangaItemsWithScore);
+                      user.importedManga = mangaItemsWithScore;
+                      user.markModified('importedManga');
+                      user.manga = [...new Set(likedManga.map(manga => String(manga._id)))];
+                      return user.save()
+                        .then(savedUser => savedUser.populate('manga')
+                          .execPopulate()
+                          .then(populatedUser => res.json(populatedUser))
+                          .catch(e => next(e)))
+                        .catch(e => next(e));
+                    })
+                  .catch(e => next(e));
+              })
+              .catch(e => next(e));
+          });
+        })
+        .catch(err => next(err));
+    })
+    .catch(e => next(e));
 }
 
 /**
@@ -175,7 +269,7 @@ function steamGames(req, res, next) {
                 const item = new Item({
                   name: newGame.name,
                   imageUrl: `http://media.steampowered.com/steamcommunity/public/images/apps/${newGame.appid}/${newGame.img_logo_url}.jpg`,
-                  metadata: newGame,
+                  metadata: JSON.parse(JSON.stringify(newGame)),
                   // metadata: {
                   //   // game
                   //   appid: newGame.appid,
