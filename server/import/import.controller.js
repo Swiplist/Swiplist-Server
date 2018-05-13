@@ -206,7 +206,6 @@ function malManga(req, res, next) {
                       )
                         .map((like) => {
                           akin.activity.log(String(user._id), String(like._id), { type: 'manga' }, 'like');
-                          akin.recommendation.markRecommendationDNR(String(user._id), String(like._id), { type: 'manga' });
                           return like;
                         });
                       Promise.each(filteredItems, like => akin.recommendation.markRecommendationDNR(String(user._id), String(like._id), { type: 'manga' }));
@@ -319,7 +318,7 @@ function steamGames(req, res, next) {
                     )
                       .map((like) => {
                         akin.activity.log(String(user._id), String(like._id), { type: 'games' }, 'like');
-                        akin.recommendation.markRecommendationDNR(String(user._id), String(like._id), { type: 'games' });
+
                         return like;
                       });
                     Promise.each(filteredItems, like => akin.recommendation.markRecommendationDNR(String(user._id), String(like._id), { type: 'games' }));

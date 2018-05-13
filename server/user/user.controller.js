@@ -1,4 +1,5 @@
 const User = require('./user.model');
+const akin = require('@asymmetrik/akin');
 
 /**
  * Load user and append to req.
@@ -27,6 +28,55 @@ function get(req, res) {
 function me(req, res, next) {
   return User.get(req.user.id)
     .then(user => res.json(user))
+    .catch(e => next(e));
+}
+
+/**
+ *Like
+ * @returns {User}
+ */
+function like(req, res, next) {
+  return User.findOne({ _id: req.user.id })
+    .then((user) => {
+      if (req.body.like === true) {
+        switch (req.body.category) {
+          case 'anime': {
+            user.anime.push(req.body.item);
+            user.anime = [...new Set(user.anime)];
+            break;
+          }
+          case 'games': {
+            user.games.push(req.body.item);
+            user.games = [...new Set(user.games)];
+
+            break;
+          }
+          case 'manga': {
+            user.manga.push(req.body.item);
+            user.manga = [...new Set(user.manga)];
+
+            break;
+          }
+          default: {
+            break;
+          }
+        }
+      } else {
+        user.dislikedItems.push(req.body.item);
+        user.dislikedItems = [...new Set(user.dislikedItems)];
+      }
+      akin.recommendation.markRecommendationDNR(
+        String(user._id), String(req.body.item._id), { type: req.body.category });
+      return user.save()
+        .then(savedUser => savedUser
+          .populate('anime')
+          .populate('manga')
+          .populate('games')
+          .execPopulate()
+          .then(populatedUser => res.json(populatedUser))
+          .catch(e => next(e)))
+        .catch(e => next(e));
+    })
     .catch(e => next(e));
 }
 
@@ -99,16 +149,16 @@ function update(req, res, next) {
  */
 function updateMe(req, res, next) {
   // const user = req.user;
-  User.get(req.user.id)
+  User.findOne({ _id: req.user.id })
     .then((user) => {
       if (req.body.anime) user.anime = req.body.anime;
       if (req.body.manga) user.manga = req.body.manga;
       if (req.body.games) user.games = req.body.games;
       user.save()
         .then(savedUser => savedUser
-          // .populate('anime')
-          // .populate('manga')
-          // .populate('games')
+          .populate('anime')
+          .populate('manga')
+          .populate('games')
           .execPopulate()
           .then(populatedUser => res.json(populatedUser))
           .catch(e => next(e)))
@@ -141,4 +191,4 @@ function remove(req, res, next) {
     .catch(e => next(e));
 }
 
-module.exports = { load, get, create, update, updateMe, list, remove, me, search };
+module.exports = { load, get, create, update, updateMe, list, remove, me, search, like };

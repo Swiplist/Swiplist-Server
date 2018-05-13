@@ -17,6 +17,10 @@ router.route('/search')
   .post(userCtrl.search);
 /** POST /api/users/search - Full text search on query*/
 
+router.route('/like')
+/** POST /api/users/like - like item*/
+  .post(expressJwt({ secret: config.jwtSecret }), userCtrl.like);
+
 router.route('/me')
 /** GET /api/users/me - Get current user reperesented by the token */
   .get(expressJwt({ secret: config.jwtSecret }), userCtrl.me)

@@ -38,6 +38,7 @@ const UserSchema = new mongoose.Schema({
   importedAnime: [{}],
   manga: [{ type: String, ref: 'Item' }],
   importedManga: [{}],
+  dislikedItems: [{ type: String, ref: 'Item' }],
   iconUrl: {
     type: String
   },
