@@ -40,6 +40,7 @@
     "boilerplate"
   ],
   "dependencies": {
+    "@asymmetrik/akin": "https://github.com/Swiplist/akin",
     "axios": "false0.18.0",
     "bcrypt": "false2.0.1",
     "bluebird": "3.5.1",

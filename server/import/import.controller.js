@@ -8,6 +8,7 @@ const Steam = require('steam-web');
 // const malScraper = require('mal-scraper');
 const axios = require('axios');
 const { parseString } = require('xml2js');
+const akin = require('@asymmetrik/akin');
 
 // const logger = require('../../config/winston');
 
@@ -81,6 +82,16 @@ function malAnime(req, res, next) {
                     (savedItems) => {
                       if (savedItems) animeItems.push(...savedItems);
                       const likedAnime = user.anime;
+                      const filteredItems = animeItems.filter(anime => !likedAnime.find(
+                        item => String(anime.metadata.series_animedb_id)
+                          === String(item.metadata.series_animedb_id))
+                      )
+                        .map((like) => {
+                          akin.activity.log(String(user._id), String(like._id), { type: 'anime' }, 'like');
+                          return like;
+                        });
+                      Promise.each(filteredItems, like => akin.recommendation.markRecommendationDNR(String(user._id), String(like._id), { type: 'anime' }));
+
                       const animeItemsWithScore = animeItems.map(
                         (item1) => {
                           item1.metadata =
@@ -189,6 +200,17 @@ function malManga(req, res, next) {
                     (savedItems) => {
                       if (savedItems) mangaItems.push(...savedItems);
                       const likedManga = user.manga;
+                      const filteredItems = mangaItems.filter(manga => !likedManga.find(
+                        item => String(manga.metadata.series_mangadb_id)
+                          === String(item.metadata.series_mangadb_id))
+                      )
+                        .map((like) => {
+                          akin.activity.log(String(user._id), String(like._id), { type: 'manga' }, 'like');
+                          akin.recommendation.markRecommendationDNR(String(user._id), String(like._id), { type: 'manga' });
+                          return like;
+                        });
+                      Promise.each(filteredItems, like => akin.recommendation.markRecommendationDNR(String(user._id), String(like._id), { type: 'manga' }));
+
                       const mangaItemsWithScore = mangaItems.map(
                         (item1) => {
                           item1.metadata =
@@ -291,6 +313,17 @@ function steamGames(req, res, next) {
                   (savedItems) => {
                     if (savedItems) gameItems.push(...savedItems);
                     const likedGames = user.games;
+                    const filteredItems = gameItems.filter(game => !likedGames.find(
+                      item => String(game.metadata.appid)
+                        === String(item.metadata.appid))
+                    )
+                      .map((like) => {
+                        akin.activity.log(String(user._id), String(like._id), { type: 'games' }, 'like');
+                        akin.recommendation.markRecommendationDNR(String(user._id), String(like._id), { type: 'games' });
+                        return like;
+                      });
+                    Promise.each(filteredItems, like => akin.recommendation.markRecommendationDNR(String(user._id), String(like._id), { type: 'games' }));
+
                     const gameItemsWithPlayTime = gameItems.map(
                       (item1) => {
                         item1.metadata =

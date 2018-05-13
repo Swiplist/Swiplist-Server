@@ -2,8 +2,8 @@ const express = require('express');
 // const validate = require('express-validation');
 // const paramValidation = require('../../config/param-validation');
 const itemCtrl = require('./item.controller');
-// const expressJwt = require('express-jwt');
-// const config = require('../../config/config');
+const expressJwt = require('express-jwt');
+const config = require('../../config/config');
 
 const router = express.Router(); // eslint-disable-line new-cap
 
@@ -17,6 +17,10 @@ router.route('/')
 router.route('/search')
   .post(itemCtrl.search);
 /** POST /api/items/search - Full text search on query*/
+
+router.route('/recommend')
+  .post(expressJwt({ secret: config.jwtSecret }), itemCtrl.recommend);
+/** POST /api/items/recommend - recommend*/
 
 router.route('/ranking')
   .post(itemCtrl.ranking);

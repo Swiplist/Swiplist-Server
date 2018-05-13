@@ -13,7 +13,8 @@ const ItemSchema = new mongoose.Schema({
   },
   description: {
     type: String,
-    required: false
+    required: false,
+    default: ''
   },
   imageUrl: {
     type: String,
@@ -37,6 +38,7 @@ const ItemSchema = new mongoose.Schema({
     ref: 'User'
   },
   rankedScore: Number,
+  tags: [{ type: String }],
   metadata: {
     // // game
     // appid: Number,
@@ -52,6 +54,7 @@ ItemSchema.index({
   name: 'text',
   description: 'text',
   category: 'text',
+  tags: 'text',
   'metadata.series_synonyms': 'text',
 }, { name: 'itemTextIndex' });
 /**

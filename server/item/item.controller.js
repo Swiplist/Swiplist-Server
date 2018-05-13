@@ -1,5 +1,6 @@
 const Item = require('./item.model');
 const User = require('../user/user.model');
+const akin = require('@asymmetrik/akin');
 
 /**
  * Load user and append to req.
@@ -11,6 +12,66 @@ function load(req, res, next, id) {
       return next();
     })
     .catch(e => next(e));
+}
+
+/**
+ * Search  item by query
+ * @returns [Item]
+ */
+function recommend(req, res, next) {
+  return User.get(req.user.id)
+    .then(me => akin.run()
+      .then(() =>
+        akin.recommendation
+          .sampleRecommendationsForUser(String(me._id), 20, req.body.categories)
+          .then((result) => {
+              const ids = result.map(item => item.item);
+              return Item.find({
+                _id: {
+                  $in: ids
+                }
+              })
+                .exec()
+                .then(items => res.json(items));
+            }
+          )
+          .catch(e => next(e))))
+    .catch(e => next(e));
+
+  // .then(me => User.find({})
+  //   .exec()
+  //   .then((users) => {
+  //     for (const user of users) {
+  //       for (const like of user.anime) {
+  //         akin.activity.log(String(user._id), String(like), { type: 'anime' }, 'like');
+  //         akin.recommendation.markRecommendationDNR(String(user._id), String(like), { type: 'anime' });
+  //       }
+  //       for (const like of user.manga) {
+  //         akin.activity.log(String(user._id), String(like), { type: 'manga' }, 'like');
+  //         akin.recommendation.markRecommendationDNR(String(user._id), String(like), { type: 'manga' });
+  //       }
+  //       for (const like of user.games) {
+  //         akin.activity.log(String(user._id), String(like), { type: 'games' }, 'like');
+  //         akin.recommendation.markRecommendationDNR(String(user._id), String(like), { type: 'games' });
+  //       }
+  //     }
+  //     const UserActivity = akin.model.model.UserActivity;
+  //     const UserItemWeights = akin.model.model.UserItemWeights;
+  //     const UserDoNotRecommend = akin.model.model.UserDoNotRecommend;
+  //     return UserActivity.remove({})
+  //       .exec()
+  //       .then(
+  //         () => UserItemWeights.remove({})
+  //           .exec()
+  //           .then(
+  //             () => UserDoNotRecommend.remove({})
+  //               .exec()
+  //               .then(() => {
+  //               })
+  //           ));
+  //   })
+  //   .catch(e => next(e))
+  // )
 }
 
 /**
@@ -163,4 +224,4 @@ function remove(req, res, next) {
     .catch(e => next(e));
 }
 
-module.exports = { load, get, create, update, list, remove, search, ranking };
+module.exports = { load, get, create, update, list, remove, search, ranking, recommend };
