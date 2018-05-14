@@ -100,6 +100,7 @@ function suggestFriends(req, res, next) {
               $in: suggestedFriendIds
             }
           })
+            .limit(20)
             .exec();
         })
         .then(users => res.json(users))
