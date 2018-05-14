@@ -93,7 +93,7 @@ function search(req, res, next) {
 }
 
 /**
- * Search  user by query
+ *Global ranking
  * @returns [Item]
  */
 function ranking(req, res, next) {
@@ -149,6 +149,7 @@ function ranking(req, res, next) {
           );
           return Promise.all(rankedItems.map(item => item.save()))
             .then(() => Item.find({ category: { $in: req.body.categories } })
+              .limit(100)
               .sort({
                 rankedScore: -1
               })

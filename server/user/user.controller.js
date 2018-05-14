@@ -38,7 +38,7 @@ function me(req, res, next) {
 function like(req, res, next) {
   return User.findOne({ _id: req.user.id })
     .then((user) => {
-      if (req.body.like === 'true') {
+      if (req.body.like === true) {
         switch (req.body.category) {
           case 'anime': {
             user.anime.push(req.body.item);
