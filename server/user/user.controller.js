@@ -32,6 +32,37 @@ function me(req, res, next) {
 }
 
 /**
+ * Add friend
+ * @returns {User}
+ */
+function addFriend(req, res, next) {
+  return User.findOne({ _id: req.user.id })
+    .then((user) => {
+      user.friends.push(req.body.friend);
+      user.friends = [...new Set(user.friends)];
+      return user.save();
+    })
+    .then(user => user.populate('friends')
+      .execPopulate())
+    .then(user => res.json(user))
+    .catch(e => next(e));
+}
+
+
+/**
+ * Add friend
+ * @returns {User}
+ */
+function meFriends(req, res, next) {
+  return User.findOne({ _id: req.user.id })
+    .then(user => user.populate('friends')
+      .execPopulate())
+    .then(user => res.json(user.friends))
+    .catch(e => next(e));
+}
+
+
+/**
  *Like
  * @returns {User}
  */
@@ -194,4 +225,6 @@ function remove(req, res, next) {
     .catch(e => next(e));
 }
 
-module.exports = { load, get, create, update, updateMe, list, remove, me, search, like };
+module.exports = {
+  load, get, create, update, updateMe, list, remove, me, search, like, addFriend, meFriends
+};

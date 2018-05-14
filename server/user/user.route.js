@@ -20,6 +20,9 @@ router.route('/search')
 router.route('/like')
 /** POST /api/users/like - like item*/
   .post(expressJwt({ secret: config.jwtSecret }), userCtrl.like);
+router.route('/add/friend')
+/** POST /api/users/add/friend - like item*/
+  .post(expressJwt({ secret: config.jwtSecret }), userCtrl.addFriend);
 
 router.route('/me')
 /** GET /api/users/me - Get current user reperesented by the token */
@@ -27,6 +30,10 @@ router.route('/me')
 
   /** PUT /api/users/me - Update user */
   .put(expressJwt({ secret: config.jwtSecret }), userCtrl.updateMe);
+
+router.route('/me/friends')
+/** GET /api/users/me/friends - get friends*/
+  .get(expressJwt({ secret: config.jwtSecret }), userCtrl.meFriends);
 
 router.route('/:userId')
 /** GET /api/users/:userId - Get user */
