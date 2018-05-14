@@ -24,6 +24,10 @@ router.route('/add/friend')
 /** POST /api/users/add/friend - add friend*/
   .post(expressJwt({ secret: config.jwtSecret }), userCtrl.addFriend);
 
+router.route('/suggest/friends')
+/** GET /api/users/suggest/friends - suggest friends*/
+  .get(expressJwt({ secret: config.jwtSecret }), userCtrl.suggestFriends);
+
 router.route('/me')
 /** GET /api/users/me - Get current user reperesented by the token */
   .get(expressJwt({ secret: config.jwtSecret }), userCtrl.me)

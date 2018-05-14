@@ -70,9 +70,26 @@ function meFriends(req, res, next) {
  */
 function suggestFriends(req, res, next) {
   return User.findOne({ _id: req.user.id })
-    .then(user => user.populate('friends')
-      .execPopulate())
-    .then(user => res.json(user.friends))
+    .then(user =>
+      akin.model.model.UserSimilarity.find({
+        users: user._id
+      })
+        .exec()
+        .then((pairs) => {
+          const ignoredSet = new Set(user.friends.concat(user.ignoredSuggestedFriends));
+          const suggestedFriendIds = pairs.sort((a, b) => b.similarity - a.similarity)
+            .map(sortedPairs => sortedPairs.users.filter(x => x !== String(user._id))[0])
+            .filter(id => !ignoredSet.has(id));
+          return User.find({
+            _id: {
+              $in: suggestedFriendIds
+            }
+          })
+            .exec();
+        })
+        .then(users => res.json(users))
+        .catch(e => next(e))
+    )
     .catch(e => next(e));
 }
 
