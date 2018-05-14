@@ -43,10 +43,11 @@ function addFriend(req, res, next) {
       user.friends = [...new Set(user.friends)];
       return user.save();
     })
-    .then(() => res.sendStatus(httpStatus.OK))
+    // .then(() => res.sendStatus(httpStatus.OK))
     // .then(user => user.populate('friends')
     //   .execPopulate())
-    // .then(user => res.json(user))
+    .then(() => User.findOne({ _id: req.body.friend }))
+    .then(user => res.json(user))
     .catch(e => next(e));
 }
 
