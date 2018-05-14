@@ -21,7 +21,7 @@ router.route('/like')
 /** POST /api/users/like - like item*/
   .post(expressJwt({ secret: config.jwtSecret }), userCtrl.like);
 router.route('/add/friend')
-/** POST /api/users/add/friend - like item*/
+/** POST /api/users/add/friend - add friend*/
   .post(expressJwt({ secret: config.jwtSecret }), userCtrl.addFriend);
 
 router.route('/me')

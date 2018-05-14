@@ -50,7 +50,7 @@ function addFriend(req, res, next) {
 
 
 /**
- * Add friend
+ * Get friends
  * @returns {User}
  */
 function meFriends(req, res, next) {
