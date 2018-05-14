@@ -24,7 +24,8 @@ function recommend(req, res, next) {
       .then(() =>
         akin.recommendation
           .sampleRecommendationsForUser(String(me._id), 20, req.body.categories)
-          .then((result) => {
+          .then(
+            (result) => {
               const ids = result.map(item => item.item);
               return Item.find({
                 _id: {
@@ -44,15 +45,18 @@ function recommend(req, res, next) {
   //     for (const user of users) {
   //       for (const like of user.anime) {
   //         akin.activity.log(String(user._id), String(like), { type: 'anime' }, 'like');
-  //         akin.recommendation.markRecommendationDNR(String(user._id), String(like), { type: 'anime' });
+  //         akin.recommendation
+  // .markRecommendationDNR(String(user._id), String(like), { type: 'anime' });
   //       }
   //       for (const like of user.manga) {
   //         akin.activity.log(String(user._id), String(like), { type: 'manga' }, 'like');
-  //         akin.recommendation.markRecommendationDNR(String(user._id), String(like), { type: 'manga' });
+  //         akin.recommendation
+  // .markRecommendationDNR(String(user._id), String(like), { type: 'manga' });
   //       }
   //       for (const like of user.games) {
   //         akin.activity.log(String(user._id), String(like), { type: 'games' }, 'like');
-  //         akin.recommendation.markRecommendationDNR(String(user._id), String(like), { type: 'games' });
+  //         akin.recommendation
+  // .markRecommendationDNR(String(user._id), String(like), { type: 'games' });
   //       }
   //     }
   //     const UserActivity = akin.model.model.UserActivity;

@@ -38,21 +38,24 @@ function me(req, res, next) {
 function like(req, res, next) {
   return User.findOne({ _id: req.user.id })
     .then((user) => {
-      if (req.body.like === true) {
+      if (req.body.like === 'true') {
         switch (req.body.category) {
           case 'anime': {
             user.anime.push(req.body.item);
+            akin.activity.log(String(user._id), String(req.body.item), { type: 'anime' }, 'like');
             user.anime = [...new Set(user.anime)];
             break;
           }
           case 'games': {
             user.games.push(req.body.item);
+            akin.activity.log(String(user._id), String(req.body.item), { type: 'games' }, 'like');
             user.games = [...new Set(user.games)];
 
             break;
           }
           case 'manga': {
             user.manga.push(req.body.item);
+            akin.activity.log(String(user._id), String(req.body.item), { type: 'manga' }, 'like');
             user.manga = [...new Set(user.manga)];
 
             break;
