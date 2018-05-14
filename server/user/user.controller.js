@@ -1,5 +1,6 @@
 const User = require('./user.model');
 const akin = require('@asymmetrik/akin');
+const httpStatus = require('http-status');
 
 /**
  * Load user and append to req.
@@ -42,9 +43,10 @@ function addFriend(req, res, next) {
       user.friends = [...new Set(user.friends)];
       return user.save();
     })
-    .then(user => user.populate('friends')
-      .execPopulate())
-    .then(user => res.json(user))
+    .then(() => res.sendStatus(httpStatus.OK))
+    // .then(user => user.populate('friends')
+    //   .execPopulate())
+    // .then(user => res.json(user))
     .catch(e => next(e));
 }
 
@@ -61,6 +63,18 @@ function meFriends(req, res, next) {
     .catch(e => next(e));
 }
 
+
+/**
+ * Get suggested friends
+ * @returns {User}
+ */
+function suggestFriends(req, res, next) {
+  return User.findOne({ _id: req.user.id })
+    .then(user => user.populate('friends')
+      .execPopulate())
+    .then(user => res.json(user.friends))
+    .catch(e => next(e));
+}
 
 /**
  *Like
@@ -102,13 +116,14 @@ function like(req, res, next) {
       akin.recommendation.markRecommendationDNR(
         String(user._id), String(req.body.item._id), { type: req.body.category });
       return user.save()
-        .then(savedUser => savedUser
-          .populate('anime')
-          .populate('manga')
-          .populate('games')
-          .execPopulate()
-          .then(populatedUser => res.json(populatedUser))
-          .catch(e => next(e)))
+        .then(() => res.sendStatus(httpStatus.OK))
+        // .then(savedUser => savedUser
+        // .populate('anime')
+        // .populate('manga')
+        // .populate('games')
+        // .execPopulate()
+        // .then(populatedUser => res.json(populatedUser))
+        // .catch(e => next(e)))
         .catch(e => next(e));
     })
     .catch(e => next(e));
@@ -171,7 +186,8 @@ function update(req, res, next) {
   user.games = req.body.games;
 
   user.save()
-    .then(savedUser => res.json(savedUser))
+    .then(() => res.sendStatus(httpStatus.OK))
+    // .then(savedUser => res.json(savedUser))
     .catch(e => next(e));
 }
 
@@ -189,13 +205,14 @@ function updateMe(req, res, next) {
       if (req.body.manga) user.manga = req.body.manga;
       if (req.body.games) user.games = req.body.games;
       user.save()
-        .then(savedUser => savedUser
-          .populate('anime')
-          .populate('manga')
-          .populate('games')
-          .execPopulate()
-          .then(populatedUser => res.json(populatedUser))
-          .catch(e => next(e)))
+        .then(() => res.sendStatus(httpStatus.OK))
+        // .then(savedUser => savedUser
+        //   .populate('anime')
+        //   .populate('manga')
+        //   .populate('games')
+        //   .execPopulate()
+        //   .then(populatedUser => res.json(populatedUser))
+        //   .catch(e => next(e)))
         .catch(e => next(e));
     })
     .catch(e => next(e));
@@ -226,5 +243,17 @@ function remove(req, res, next) {
 }
 
 module.exports = {
-  load, get, create, update, updateMe, list, remove, me, search, like, addFriend, meFriends
+  load,
+  get,
+  create,
+  update,
+  updateMe,
+  list,
+  remove,
+  me,
+  search,
+  like,
+  addFriend,
+  meFriends,
+  suggestFriends
 };
