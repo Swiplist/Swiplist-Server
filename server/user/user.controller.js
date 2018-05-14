@@ -236,6 +236,7 @@ function updateMe(req, res, next) {
       if (req.body.anime) user.anime = req.body.anime;
       if (req.body.manga) user.manga = req.body.manga;
       if (req.body.games) user.games = req.body.games;
+      if (req.body.friends) user.friends = req.body.friends;
       user.save()
         .then(() => res.sendStatus(httpStatus.OK))
         // .then(savedUser => savedUser
