@@ -46,7 +46,7 @@ function addFriend(req, res, next) {
     // .then(() => res.sendStatus(httpStatus.OK))
     // .then(user => user.populate('friends')
     //   .execPopulate())
-    .then(() => User.findOne({ _id: req.body.friend }))
+    .then(() => User.get({ _id: req.body.friend }))
     .then(user => res.json(user))
     .catch(e => next(e));
 }
