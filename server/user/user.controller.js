@@ -50,6 +50,21 @@ function addFriend(req, res, next) {
     .catch(e => next(e));
 }
 
+/**
+ * ignore friend
+ * @returns {User}
+ */
+function ignoreSuggestedFriend(req, res, next) {
+  return User.findOne({ _id: req.user.id })
+    .then((user) => {
+      user.ignoredSuggestedFriends.push(req.body.friend);
+      user.ignoredSuggestedFriends = [...new Set(user.ignoredSuggestedFriends)];
+      return user.save();
+    })
+    .then(() => res.sendStatus(httpStatus.OK))
+    .catch(e => next(e));
+}
+
 
 /**
  * Get friends
@@ -272,5 +287,6 @@ module.exports = {
   like,
   addFriend,
   meFriends,
-  suggestFriends
+  suggestFriends,
+  ignoreSuggestedFriend
 };

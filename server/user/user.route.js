@@ -27,6 +27,9 @@ router.route('/add/friend')
 router.route('/suggest/friends')
 /** GET /api/users/suggest/friends - suggest friends*/
   .get(expressJwt({ secret: config.jwtSecret }), userCtrl.suggestFriends);
+router.route('/suggest/friends/ignore')
+/** POST /api/users/suggest/friends/ignore - ignore suggest friends*/
+  .post(expressJwt({ secret: config.jwtSecret }), userCtrl.ignoreSuggestedFriend);
 
 router.route('/me')
 /** GET /api/users/me - Get current user reperesented by the token */

@@ -94,6 +94,7 @@ UserSchema.statics = {
       .populate('games')
       .populate('anime')
       .populate('manga')
+      .populate('friends')
       .exec()
       .then((user) => {
         if (user) {
