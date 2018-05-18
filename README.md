@@ -46,6 +46,12 @@ cp .env.example .env
 
 Notice that you will need to fill in the blank after  `STEAM_WEB_API_KEY=` with your own steam web api key.
 
+Install and start MongoDB server before starting this node.js server:
+```sh
+# Start server
+mongod
+```
+
 Start server:
 ```sh
 # Start server
