@@ -148,7 +148,7 @@ docker run -p 4040:4040 express-mongoose-es6-rest-api
 ```
 
 ## License
-This project is licensed under the [MIT License](https://github.com/kunalkapadia/express-mongoose-es6-rest-api/blob/master/LICENSE)
+This project is licensed under the [Apache License 2.0](https://github.com/Swiplist/Swiplist-Server/blob/master/LICENSE)
 
 
 ## Original features included in [Express & mongoose REST API Boilerplate in ES6 with Code Coverage](https://github.com/kunalkapadia/express-mongoose-es6-rest-api) 
@@ -173,7 +173,8 @@ This project is licensed under the [MIT License](https://github.com/kunalkapadia
 
 
 ## Original License
-The original boilerplate project is licensed under the [Apache License 2.0](https://github.com/Swiplist/Swiplist-Server/blob/master/LICENSE)
+The original boilerplate project is licensed under the [MIT License](https://github.com/kunalkapadia/express-mongoose-es6-rest-api/blob/master/LICENSE)
+                                                       
 
 ## Credits
 
